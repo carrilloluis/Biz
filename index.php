@@ -11,6 +11,7 @@ use Steampixel\Route;
 define('STANDARD_HEADER', 'Content-Type: application/json; charset="UTF-8"');
 define('FILEPATH', '/tmp/Biz.xml');
 define('VERSION', '0.0.1.13');
+define('DATABASE_NAME', 'sqlite:/tmp/t3st.db');
 
 function
 uuid():string
@@ -33,7 +34,7 @@ Route::add('/Biz/v1/', function()
 	$xml = simplexml_load_file(FILEPATH) or die('Error: Cannot connect datasource');
 	header(STANDARD_HEADER);
 	foreach($xml->children() as $empresa) {
-		$tmp[] = ['id' => strtoupper(@strval($empresa['id'])), 'nm' => @strval($empresa->desc), 'ein' => @strval($empresa->ruc)];
+		$tmp[] = ['id' => strtoupper(@strval($empresa['id'])), 'nm' => @strval($empresa->desc), 'cd' => @strval($empresa->ruc)];
 	}
 	echo json_encode($tmp);
 }, 'GET');
@@ -47,7 +48,7 @@ Route::add('/Biz/v1/([0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}
 	header(STANDARD_HEADER);
 	echo json_encode([
 		'nm' => @strval($result[0]->desc),
-		'ein' => @strval($result[0]->ruc)
+		'cd' => @strval($result[0]->ruc)
 	]);
 }, 'GET');
 
@@ -96,6 +97,8 @@ Route::pathNotFound(function( $path )
 	http_response_code(404);
 	echo "Not found {$path} url";
 });
+
+require_once('v2.php');
 
 Route::run('/', true, true);
 
